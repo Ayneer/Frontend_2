@@ -6,7 +6,7 @@ import Sesion from './components/Sesion/Sesion';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.css';
 //Actualizar Url aqui y en sesion lin 12.
-const urlServer = "http://192.168.1.61:3500";
+const urlServer = "http://192.168.1.54:3500";
 
 ReactDOM.render(<BrowserRouter><Sesion url={urlServer} /></BrowserRouter>, document.getElementById('root'));
 

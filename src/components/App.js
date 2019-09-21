@@ -24,6 +24,7 @@ class App extends React.Component {
   }
   //Metodo para verificar si esta autenticado
   componentDidMount() {//Se realiza verificacion con servidor
+    console.log(this.props.usuario);
     if(this.props.usuario.correo){
       console.log(this.props.usuario);
       usuario = this.props.usuario;
@@ -94,7 +95,7 @@ class App extends React.Component {
     } else {
       return (
 
-        <div>Cargando...</div>
+        <div>Cargando.app ..</div>
       );
 
     }

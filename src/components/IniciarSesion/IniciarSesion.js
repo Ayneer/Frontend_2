@@ -64,8 +64,8 @@ class IniciarSesion extends React.Component {
                     socket.on('recibido', (dato) => {//Si se acepta el correo puedo iniciar sesion
                         if (dato) {
                             console.log("Sesion activa correctamente.");
-                            this.props.activarSocket(socket);
                             this.props.usuario(usuario);
+                            this.props.activarSocket(socket);
                             this.props.history.push('/App');// Se redirecciona a la app 
                         }
                     });

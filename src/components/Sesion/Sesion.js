@@ -9,7 +9,7 @@ let socket = null;//Conexion con socket servidor
 
 const crearSocket2 = function () {//borrar y probar
     console.log("Cree socket");
-    socket = socketIOClient('http://192.168.1.61:3500');
+    socket = socketIOClient('http://192.168.1.54:3500');
     socket.on('connect', function () { });
     return socket;
 }
@@ -20,6 +20,7 @@ class Sesion extends React.Component {
         super();
 
         this.state = {
+
             ok: false,
             consumo: 0,
             usuario: {},
@@ -36,11 +37,10 @@ class Sesion extends React.Component {
             console.log(consumo);
             this.setState({ consumo: consumo });
         });
-        socket.on('limiteKwh', (consumo) => {
-            console.log("Alerta: has superado el 50% de tu limite propuesto " + consumo);
-            Push.create("Hello from Sabe.io!", {
-                body: "This is a web notification!",
-                icon: "/icon.png",
+        socket.on('limiteKwh', (notificacion) => {
+            console.log("Alerta: has superado el 50% de tu limite" + notificacion);
+            Push.create("Has superado el 50% de tu limite actual!", {
+                body: "Limite: " + notificacion.limite+"/nConsumo: " + notificacion.consumo+"/nCosto: "+notificacion.costo,
                 timeout: 5000,
                 onClick: function () {
                     console.log(this);
@@ -50,8 +50,8 @@ class Sesion extends React.Component {
         this.sesionActiva(true);
     }
 
-    sesionActiva(estado){
-        this.setState({sesionActiva: estado});
+    sesionActiva(estado) {
+        this.setState({ sesionActiva: estado });
     }
 
     usuario(usuario) {
@@ -62,7 +62,7 @@ class Sesion extends React.Component {
 
     async componentDidMount() {
         console.log('componentDidMount sesion');
-        const respuesta = await fetch(this.props.url+'/estoyAutenticado', {
+        const respuesta = await fetch(this.props.url + '/estoyAutenticado', {
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -80,7 +80,7 @@ class Sesion extends React.Component {
                 if (dato) {
                     this.activarSocket(socket);
                     console.log("Sesion: Sesin activa, reenviando hacia app");
-                    this.props.history.push('/App');
+                    //this.props.history.push('/App');
                     this.setState({ ok: true, usuario: res.usuario });
                 }
             });
@@ -93,13 +93,18 @@ class Sesion extends React.Component {
         if (this.state.ok) {
             return (
                 <div id="">
-                    <Switch>
-                        {this.state.sesionActiva ? 
-                            <Route path="/App" render={() => <App consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} /> 
-                            : 
-                            <Route path="/" render={() => <IniciarSesion usuario={this.usuario} activarSocket={this.activarSocket} history={this.props.history} crearSocket2={crearSocket2} url={this.props.url} />} />
+                    <div>
+                        {this.state.sesionActiva ?
+                            <Switch>
+                                <Route exact path="/App" render={() => <App consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
+                                <Route path="/" render={() => <App consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
+                            </Switch>
+                            :
+                            <Switch>
+                                <Route path="/" render={() => <IniciarSesion usuario={this.usuario} activarSocket={this.activarSocket} history={this.props.history} crearSocket2={crearSocket2} url={this.props.url} />} />
+                            </Switch>
                         }
-                    </Switch>
+                    </div>
                 </div>
             )
         } else {
