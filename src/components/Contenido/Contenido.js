@@ -44,9 +44,10 @@ class Pagina extends React.Component {
                         <Route exact path="/App/historial" render={() => <Historial usuario={this.state.usuario} url={this.props.url} />} />
 
                         <Route exact path="/App/limite" render={() => <Limite usuario={this.state.usuario} url={this.props.url} />} />
-
+                        
+                        <Route exact path="/App/ajustes" render={() => <Ajustes actualizarUsuario={this.props.actualizarUsuario} cerrarSesion={this.props.cerrarSesion} usuario={this.state.usuario} url={this.props.url}/> } />
                         <Route exact path="/App/generarReporte" component={Reporte} />
-                        <Route exact path="/App/ajustes" component={Ajustes} />
+                        
 
                     </Switch>
                 </div>

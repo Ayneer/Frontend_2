@@ -96,8 +96,8 @@ class Sesion extends React.Component {
                     <div>
                         {this.state.sesionActiva ?
                             <Switch>
-                                <Route exact path="/App" render={() => <App consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
-                                <Route path="/" render={() => <App consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
+                                <Route exact path="/App" render={() => <App  actualizarUsuario={this.usuario} consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
+                                <Route path="/" render={() => <App actualizarUsuario={this.usuario}  consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
                             </Switch>
                             :
                             <Switch>

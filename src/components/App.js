@@ -83,7 +83,7 @@ class App extends React.Component {
 
                 <Navbar metodo={this.cambiarEstado} cerrarSesion={this.cerrarSesion} />
 
-                <Contenido consumo={this.props.consumo} usuario={usuario} url={this.props.url} />
+                <Contenido actualizarUsuario={this.props.actualizarUsuario} cerrarSesion={this.cerrarSesion} consumo={this.props.consumo} usuario={usuario} url={this.props.url} />
 
               </div>
 
