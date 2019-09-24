@@ -4,6 +4,7 @@ import Menu from './Menu/Menu';
 import Navbar from './Navbar/Navbar';
 import Contenido from './Contenido/Contenido';
 import Footer from './Footer/Footer';
+import Cargando from './Cargando/CargandoPagina';
 
 let usuario = {};
 
@@ -47,7 +48,7 @@ class App extends React.Component {
 
   //Metodo para cerrar sesion de usuario 
   cerrarSesion() {
-    const socket = this.props.crearSocket2();
+    const socket = this.props.crearSocket2(this.props.url);
     socket.emit('salir', usuario.correo);//Emitir correo para solicitar salir de sesion
     socket.on('recibido', (dato) => {//El correo el usuario es recibido
       fetch(this.props.url+'/cerrarSesion', {//Solicitud para cerrar sesion
@@ -59,6 +60,9 @@ class App extends React.Component {
         .then(res => {
           if (res.estado) {
             console.log(res);
+            this.setState({
+              mostrar: false
+            });
             this.props.sesionActiva(false);
             window.location.reload();
           }
@@ -71,8 +75,6 @@ class App extends React.Component {
       console.log("soy render app");
       console.log("App: "+usuario);
       return (
-
-        
           <div className="App">
 
             <div id="app">
@@ -89,13 +91,10 @@ class App extends React.Component {
 
             </div>
           </div>
-
-        
       );
     } else {
       return (
-
-        <div>Cargando.app ..</div>
+        <Cargando />
       );
 
     }

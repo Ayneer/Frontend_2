@@ -59,7 +59,7 @@ class IniciarSesion extends React.Component {
                         contraseña: ""
                     });
                 } else {
-                    let socket = this.props.crearSocket2();
+                    let socket = this.props.crearSocket2(this.props.url);
                     socket.emit('mi_correo', usuario.correo);//Emitir correo por socket
                     socket.on('recibido', (dato) => {//Si se acepta el correo puedo iniciar sesion
                         if (dato) {
@@ -98,7 +98,7 @@ class IniciarSesion extends React.Component {
                     console.log(res);
                     if (res.estado) {
                         console.log("clave cambiada con exito");
-                        let socket = this.props.crearSocket2();
+                        let socket = this.props.crearSocket2(this.props.url);
                         socket.emit('mi_correo', usuario.correo);//Emitir correo por socket
                         socket.on('recibido', (dato) => {//Si se acepta el correo puedo iniciar sesion
                             if (dato) {

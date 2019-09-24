@@ -7,9 +7,9 @@ import Push from 'push.js';
 
 let socket = null;//Conexion con socket servidor
 
-const crearSocket2 = function () {//borrar y probar
+const crearSocket2 = function (url) {//borrar y probar
     console.log("Cree socket");
-    socket = socketIOClient('http://192.168.1.54:3500');
+    socket = socketIOClient(url);
     socket.on('connect', function () { });
     return socket;
 }
@@ -20,7 +20,6 @@ class Sesion extends React.Component {
         super();
 
         this.state = {
-
             ok: false,
             consumo: 0,
             usuario: {},
@@ -74,7 +73,7 @@ class Sesion extends React.Component {
             this.props.history.push('/');
             this.setState({ ok: true });
         } else {
-            const socket = crearSocket2();
+            const socket = crearSocket2(this.props.url);
             socket.emit('actualizarSocket', res.usuario.correo);//Emitir correo por socket
             socket.on('Actualizado', (dato) => {//Si se acepta el correo puedo iniciar sesion
                 if (dato) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import "./ajustes.css";
+import Cargando from '../../Cargando/CargandoPagina';
 
 class Ajustes extends React.Component {
 
@@ -11,80 +12,61 @@ class Ajustes extends React.Component {
         contrasena: "",
         contrasenaNueva: "",
         contrasenaNueva2: "",
-        correo: ""
+        correo: "",
+        telefono: 0,
+        classMensaje: "",
+        nuevoMensaje: false,
+        mensaje: ""
     }
 
     changeInput = (evento) => {
         const name = evento.target.name;
-        let { usuario, contrasena, contrasenaNueva, contrasenaNueva2, correo } = this.state;
-        if (name === "correo") {
-            correo = evento.target.value;
-        } else {
-            if (name === "telefono") {
-                usuario.telefono = +evento.target.value;
-            } else {
-                if (name === "contrasena") {
-                    contrasena = evento.target.value;
-                } else {
-                    if (name === "contrasenaNueva") {
-                        contrasenaNueva = evento.target.value;
-                    } else {
-                        if (name === "contrasenaNueva2") {
-                            contrasenaNueva2 = evento.target.value;
-                        }
-                    }
-                }
-            }
-        }
-
         this.setState({
-            usuario, contrasena, contrasenaNueva, contrasenaNueva2, correo
+            [name]: evento.target.value
         });
     }
 
     guardar = () => {
-        const { usuario, contrasena, contrasenaNueva, contrasenaNueva2, cambiarContrasena, correo } = this.state;
+        const { usuario, contrasena, contrasenaNueva, contrasenaNueva2, cambiarContrasena, correo, telefono } = this.state;
+
         let contador = 0;
-        if (usuario.telefono === "") {
-            usuario.telefono = 0;
+
+        if (telefono === "") {
+            telefono = 0;
         }
 
-        console.log(this.state.usuario);
-        console.log(this.state.contrasena);
-        console.log(this.state.contrasenaNueva);
-        console.log(this.state.contrasenaNueva2);
-
-        if (correo === "") {
+        if (correo === "" || !this.validarCorreo(correo)) {
             console.log("Digite un correo valido");
+            this.lanzarMensaje("Digite un correo valido", "alert alert-danger");
             contador++;
-            
-
         } else {
             if (cambiarContrasena) {
                 if (contrasena === "" || contrasenaNueva === "" || contrasenaNueva2 === "") {
                     console.log("Digite todos los campos requeridos");
+                    this.lanzarMensaje("Digite todos los campos requeridos", "alert alert-danger");
                     contador++;
                 } else {
                     if (contrasenaNueva !== contrasenaNueva2) {
                         console.log("Contraseñas no coinciden");
+                        this.lanzarMensaje("Contraseñas no coinciden" , "alert alert-danger");
                         contador++;
                     } else {
                         if (contrasenaNueva === usuario.correo) {
                             console.log("Contraseña no puede ser igual al correo");
+                            this.lanzarMensaje("Contraseña no puede ser igual al correo", "alert alert-danger");
                             contador++;
                         }
                     }
                 }
             }
-        
+
         }
-        
-        
-        if(contador===0){
-            fetch(this.props.url+'/cliente/' + usuario.correo, {//Solicitud cambio de contrase
+
+        if (contador === 0) {
+            fetch(this.props.url + '/cliente/' + usuario.correo, {
                 method: 'PUT',
                 credentials: 'include',
-                body: JSON.stringify({ sesionP: false, cambiarContrasena, contrasena, contrasenaNueva, correo, telefono: usuario.telefono }),
+                body: JSON.stringify({ sesionP: false, cambiarContrasena, contrasena, contrasenaNueva, correo, telefono }),
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8',
                     'Accept': 'application/json'
@@ -94,22 +76,20 @@ class Ajustes extends React.Component {
             }).then(res => {
                 if (res.estado) {
                     console.log("Actuaizacion con exito");
-                    if(usuario.correo !== correo){
+                    if (usuario.correo !== correo) {
                         this.props.cerrarSesion();
+                    } else {
+                        usuario.telefono = +telefono;
+                        this.props.actualizarUsuario(usuario);
+                        this.cancelar();
+                        this.lanzarMensaje("Actualizacion realizada con exito!", "alert alert-success");
+                        console.log(res);
                     }
-                    
-                    // usuario.correo = correo;
-                    // this.props.actualizarUsuario(usuario);
-                    this.cancelar();
-                    console.log(res);
                 } else {
                     console.log(res);
                 }
             });
         }
-
-
-
     }
 
     actualizarData(event) {
@@ -129,8 +109,11 @@ class Ajustes extends React.Component {
             contrasena: "",
             contrasenaNueva: "",
             contrasenaNueva2: "",
-            correo: ""
-
+            correo: this.props.usuario.correo,
+            telefono: this.props.usuario.telefono,
+            classMensaje: "",
+            nuevoMensaje: false,
+            mensaje: ""
         });
     }
 
@@ -159,24 +142,53 @@ class Ajustes extends React.Component {
                 }
             } else {
                 usuario = this.props.usuario;
-
             }
             this.setState({
                 mostrarAjustes: true,
                 usuario,
-                correo: usuario.correo
+                correo: usuario.correo,
+                telefono: usuario.telefono
             });
         }
     }
 
+    cerrarMensaje = () => {
+        this.setState({
+            classMensaje: "",
+            nuevoMensaje: false,
+            mensaje: ""
+        });
+    }
+
+    lanzarMensaje(mensaje, classMensaje){
+        this.setState({
+            classMensaje,
+            nuevoMensaje: true,
+            mensaje
+        });
+    }
+
+    validarCorreo(correo) {
+        var re = /^(([^<>()[\]\\.,;:\s@]+(\.[^<>()[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(correo);
+    }
+
     render() {
 
-        const { cambiarContrasena, disableInput, mostrarAjustes, usuario, contrasena, contrasenaNueva, contrasenaNueva2, correo } = this.state;
+        const { cambiarContrasena, disableInput, mostrarAjustes, usuario, contrasena, contrasenaNueva, contrasenaNueva2, correo, telefono, nuevoMensaje, mensaje, classMensaje } = this.state;
         if (mostrarAjustes) {
             return (
-                <div className="container">
+                <div className="ajustes container">
                     <form onSubmit={this.actualizarData}>
                         <div className="card">
+                            {nuevoMensaje ?
+                                <div className={classMensaje} id="alert" role="alert">
+                                    {mensaje}
+                                    <button type="button" className="close" onClick={this.cerrarMensaje}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                : null}
                             <h6 className="titulo-ajustes">Ajustes</h6>
                             <div className="card-body">
                                 <div className="form-group">
@@ -189,7 +201,7 @@ class Ajustes extends React.Component {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="inputTelefono"> Telefono </label>
-                                    <input type="number" name="telefono" value={usuario.telefono} className="form-control" id="inputTelefono" onChange={this.changeInput} placeholder="Telefono" disabled={disableInput} />
+                                    <input type="number" name="telefono" value={telefono} className="form-control" id="inputTelefono" onChange={this.changeInput} placeholder="Telefono" disabled={disableInput} />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="inputCorreo"> Correo </label>
@@ -232,7 +244,7 @@ class Ajustes extends React.Component {
             )
         } else {
             return (
-                <div>Cargando Ajustes...</div>
+                <Cargando />
             )
         }
 

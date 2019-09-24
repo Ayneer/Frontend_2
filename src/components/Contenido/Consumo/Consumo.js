@@ -38,7 +38,7 @@ class Consumo extends React.Component {
     }
 
     componentDidMount() {
-        console.log("componentDidMount Consumo "+this.props.usuario.correo);
+        console.log(this.props.usuario);
         if (this.props.usuario.correo) {
             if (this.props.consumo === 0) {
                 fetch(this.props.url+'/consumo/' + this.props.usuario.correo, {//Solicitr consumo real

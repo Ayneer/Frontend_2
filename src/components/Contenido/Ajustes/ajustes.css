@@ -1,3 +1,17 @@
 .titulo-ajustes{
+    padding-top: 15px;
     text-align: center;
+}
+
+.alert{
+    margin-left:  50px;
+    margin-right: 50px;
+    margin-top:   30px;
+}
+
+@media (max-width: 430px) {
+    
+    .ajustes{
+        background-color: black;
+    }
 }
