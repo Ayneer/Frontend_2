@@ -8,7 +8,7 @@ class Footer extends React.Component {
             <footer className=" ">
                 <div className="row">
                     <div className="col-12">
-                        <p>Copyright &copy; 2019. Ayneer Gonzalez & Karen Benedetti. Todos los derechos reservados.</p>
+                        <p id="p-footer">Copyright &copy; 2019. Ayneer Gonzalez & Karen Benedetti. Todos los derechos reservados.</p>
                     </div>
                 </div>
             </footer>

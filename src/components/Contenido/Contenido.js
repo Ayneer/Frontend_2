@@ -29,12 +29,9 @@ class Pagina extends React.Component {
 
     render() {
         console.log(this.props.url);
-        console.log("soy contenido render");
         if (this.state.activarContenidos) {
-            console.log("contenido activado");
-            console.log("contenido: "+this.state.usuario);
             return (
-                <div id="contenido">
+                <div className="contenido">
                     <Switch>
                         <Route exact path="/App" render={() => <Consumo usuario={this.state.usuario} consumo={this.props.consumo} url={this.props.url} />} />
                         <Route exact path="/" render={() => <Consumo usuario={this.state.usuario} consumo={this.props.consumo} url={this.props.url} />} />

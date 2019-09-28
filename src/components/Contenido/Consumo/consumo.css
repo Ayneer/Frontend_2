@@ -27,7 +27,8 @@
     font-family: 'Poppins', sans-serif;
     color:rgb(60,173,228);;
 }
-h6{
+
+#cuadros-consumo{
     color:gray;
     font-family:  'Didact Gothic', sans-serif;
     text-decoration:underline;

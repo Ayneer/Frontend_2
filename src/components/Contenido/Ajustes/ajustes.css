@@ -1,17 +1,63 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
 .titulo-ajustes{
-    padding-top: 15px;
-    text-align: center;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 22px;
+    padding-bottom: 20px;
+    color: #838383;
+
 }
 
-.alert{
+#btn-editar-perfil{
+    padding-top: 35px;
+}
+
+#label-input{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+}
+
+.ajustes{
+    padding-top: 35px;
+}
+
+.card-ajustes{
+    background-color: orange
+}
+
+.ocultar{
+    visibility: hidden;
+}
+
+.alerta-ajustes{
     margin-left:  50px;
     margin-right: 50px;
-    margin-top:   30px;
+}
+
+.btn-guardar-ajustes{
+    margin-right: 15px;
+}
+
+.btn-cancelar-ajustes{
+    margin-right: 15px;
 }
 
 @media (max-width: 430px) {
     
-    .ajustes{
-        background-color: black;
-    }
+    
 }
+/* // Small devices (landscape phones, 576px and up) */
+@media (max-width: 576px) { 
+ }
+
+/* // Medium devices (tablets, 768px and up) */
+@media (max-width: 768px) {  }
+
+/* // Large devices (desktops, 992px and up) */
+@media (max-width: 992px) { 
+
+ }
+
+/* // Extra large devices (large desktops, 1200px and up) */
+@media (max-width: 1200px) {  }

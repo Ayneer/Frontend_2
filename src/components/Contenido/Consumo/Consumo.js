@@ -83,7 +83,7 @@ class Consumo extends React.Component {
                 <div id="contenido">
                     <div className="row">
                         <div id="cuadro1" className="col-11">
-                            <h6>Mi consumo actual</h6>
+                            <h6 id="cuadros-consumo">Mi consumo actual</h6>
                             {mostrar ?
                                 <h1 id="valor">{this.state.consumo}</h1> :
                                 <h1 id="valor">{consumo}</h1>
@@ -97,10 +97,10 @@ class Consumo extends React.Component {
                     </div>
                     <div className="row">
                         <div id="cuadro3" className="col-5">
-                            <h6>Costo</h6>
+                            <h6 id="cuadros-consumo">Costo</h6>
                         </div>
                         <div id="cuadro4" className="col-5 offset-md-1">
-                            <h6>Limite</h6>
+                            <h6 id="cuadros-consumo">Limite</h6>
                         </div>
                     </div>
                 </div>

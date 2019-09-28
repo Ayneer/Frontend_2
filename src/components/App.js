@@ -26,7 +26,7 @@ class App extends React.Component {
   //Metodo para verificar si esta autenticado
   componentDidMount() {//Se realiza verificacion con servidor
     console.log(this.props.usuario);
-    if(this.props.usuario.correo){
+    if (this.props.usuario.correo) {
       console.log(this.props.usuario);
       usuario = this.props.usuario;
       this.setState({ mostrar: true });
@@ -51,7 +51,7 @@ class App extends React.Component {
     const socket = this.props.crearSocket2(this.props.url);
     socket.emit('salir', usuario.correo);//Emitir correo para solicitar salir de sesion
     socket.on('recibido', (dato) => {//El correo el usuario es recibido
-      fetch(this.props.url+'/cerrarSesion', {//Solicitud para cerrar sesion
+      fetch(this.props.url + '/cerrarSesion', {//Solicitud para cerrar sesion
         credentials: 'include'
       })
         .then(function (response) {//Analiza respuesta de servidor
@@ -73,24 +73,18 @@ class App extends React.Component {
   render() {
     if (this.state.mostrar) {
       console.log("soy render app");
-      console.log("App: "+usuario);
+      console.log("App: " + usuario);
       return (
-          <div className="App">
-
-            <div id="app">
-
-              <Menu estado={this.state.estado} />
-
-              <div id="principal">
-
-                <Navbar metodo={this.cambiarEstado} cerrarSesion={this.cerrarSesion} />
-
-                <Contenido actualizarUsuario={this.props.actualizarUsuario} cerrarSesion={this.cerrarSesion} consumo={this.props.consumo} usuario={usuario} url={this.props.url} />
-
-              </div>
-
+        <div className="App">
+          <div id="app">
+            <Menu estado={this.state.estado} />
+            <div id="principal">
+              <Navbar metodo={this.cambiarEstado} cerrarSesion={this.cerrarSesion} />
+              <Contenido actualizarUsuario={this.props.actualizarUsuario} cerrarSesion={this.cerrarSesion} consumo={this.props.consumo} usuario={usuario} url={this.props.url} />
             </div>
+
           </div>
+        </div>
       );
     } else {
       return (
