@@ -10,7 +10,8 @@ class Historial extends React.Component {
 
         this.state = {
             mostrarH: false,
-            mostrarTabla: true
+            mostrarTabla: true,
+            mostrarGrafica: false
         }
 
         this.consultarHistorial = this.consultarHistorial.bind(this);
@@ -174,10 +175,8 @@ class Historial extends React.Component {
     consultarHistorial(e) {
         e.preventDefault();
         const mes = e.target.value;
-        this.setState({
-            mostrarTabla: false
-        });
-        fetch(this.props.url+'/historial/' + usuario.correo, {//Solicitar historial
+
+        fetch(this.props.url + '/historial/' + usuario.correo, {//Solicitar historial
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -187,6 +186,10 @@ class Historial extends React.Component {
             return response.json();
         }).then(res => {
             console.log(res.historial);
+            this.setState({
+                mostrarTabla: false,
+                mostrarGrafica: true
+            });
             this.graficar(this.obtenerHistoriales(res.historial, mes));
 
         }).catch(error => console.error('Error:', error));
@@ -195,12 +198,13 @@ class Historial extends React.Component {
 
     atras() {
         this.setState({
-            mostrarTabla: true
+            mostrarTabla: true,
+            mostrarGrafica: false
         })
     }
 
     nombreMes(mes) {
-        
+
         let nombreMes = "";
         switch (mes) {
             case 1:
@@ -253,7 +257,7 @@ class Historial extends React.Component {
         let objMes = [];
         let data = {}
 
-        fetch(this.props.url+'/historial/' + correo, {//Solicitar historial
+        fetch(this.props.url + '/historial/' + correo, {//Solicitar historial
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -297,11 +301,18 @@ class Historial extends React.Component {
                 data = {};
                 console.log(data);
             }
-            console.log(obj);
+
+            let mostrarT = false;
+
+            if (obj.length > 0) {
+                mostrarT = true;
+            }
+
             this.setState({
-                mostrarTabla: true,
+                mostrarTabla: mostrarT,
                 mostrarH: true
-            })
+            });
+
         }).catch(error => console.error('Error:', error));
     }
 
@@ -318,12 +329,11 @@ class Historial extends React.Component {
         if (this.state.mostrarH) {
             return (
                 <div className="Historial">
-                    {this.state.mostrarTabla ?
+                    {(this.state.mostrarTabla && obj.length > 0) ?
                         <div className="tabla">
                             <table className="table">
                                 <thead>
                                     <tr>
-                                        <th scope="col">#</th>
                                         <th scope="col">Mes</th>
                                         <th scope="col">Kwh</th>
                                         <th scope="col">$</th>
@@ -333,7 +343,6 @@ class Historial extends React.Component {
                                 <tbody>
                                     {obj.map((mes, id) =>
                                         <tr key={id}>
-                                            <th scope="row" >{id + 1}</th>
                                             <td>{this.nombreMes(+mes.mes)}</td>
                                             <td>{mes.consumoTotal}</td>
                                             <td>{mes.consumoCosto}</td>
@@ -346,11 +355,21 @@ class Historial extends React.Component {
                             </table>
                         </div>
                         :
+                        !this.state.mostrarTabla && this.state.mostrarGrafica ?
+                            null
+                            : 
+                            <div>
+                                <p> Aun no tienes historiales! </p>
+                            </div>
+
+                    }
+                    {this.state.mostrarGrafica ?
                         <div className="grafica">
                             <canvas id="myChart"></canvas>
                             <button onClick={this.atras} >Atras </button>
                         </div>
-
+                        :
+                        null
                     }
                 </div>
 

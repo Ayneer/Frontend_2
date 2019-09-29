@@ -156,13 +156,11 @@ class Limite extends React.Component {
     render() {
         console.log(this.props.url);
         if (this.state.mostrarLimite) {
-            const { usuario, limite, editarLimite, disableInput, arrayOpciones } = this.state;
+            const { limite, editarLimite, disableInput, arrayOpciones } = this.state;
             let mensaje = null;
-            if (usuario.limite) {
-                mensaje = usuario.limite;
-            } else {
+            if (limite === 0) {
                 mensaje = "No has definido algun limite.";
-            }
+            } 
             return (
                 <div id="contenido">
                     <div className="row">

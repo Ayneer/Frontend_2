@@ -1,6 +1,7 @@
 import React from 'react';
 import "./ajustes.css";
 import Cargando from '../../Cargando/CargandoPagina';
+import VentanaAsegurar from '../Modal/ventanaAsegurar';
 
 let confirmarCambios = false;
 
@@ -32,6 +33,12 @@ class Ajustes extends React.Component {
     asegurarCambios = () => {
         confirmarCambios = true;
         this.guardar();
+    }
+
+    cerrarVentanaModal = () => {
+        this.setState({
+            habilitarModal: false
+        })
     }
 
     guardar = () => {
@@ -66,14 +73,22 @@ class Ajustes extends React.Component {
 
         }
 
-        if (contador === 0) {
-            this.setState({
-                habilitarModal: true
-            })
+
+        if (correo === usuario.correo && +telefono === usuario.telefono && !cambiarContrasena) {
+            contador++;
+            this.cancelar();
+        } else {
+            if (contador === 0 && !confirmarCambios) {
+                this.setState({
+                    habilitarModal: true
+                });
+            }
         }
 
         if (contador === 0 && confirmarCambios) {
-            console.log("guardar")
+            this.setState({
+                habilitarModal: false
+            })
             fetch(this.props.url + '/cliente/' + usuario.correo, {
                 method: 'PUT',
                 credentials: 'include',
@@ -122,8 +137,8 @@ class Ajustes extends React.Component {
             contrasena: "",
             contrasenaNueva: "",
             contrasenaNueva2: "",
-            correo: this.props.usuario.correo,
-            telefono: this.props.usuario.telefono,
+            correo: this.state.usuario.correo,
+            telefono: this.state.usuario.telefono,
             classMensaje: "",
             nuevoMensaje: false,
             mensaje: ""
@@ -187,22 +202,24 @@ class Ajustes extends React.Component {
     }
 
     render() {
-        const { cambiarContrasena, disableInput, mostrarAjustes, usuario, contrasena, contrasenaNueva, contrasenaNueva2, correo, telefono, nuevoMensaje, mensaje, classMensaje } = this.state;
+
+        const { cambiarContrasena, disableInput, mostrarAjustes, usuario, contrasena, contrasenaNueva, contrasenaNueva2, correo, telefono, nuevoMensaje, mensaje, classMensaje, habilitarModal } = this.state;
+        console.log(usuario);
         if (mostrarAjustes) {
             return (
                 <div className="ajustes container">
                     <form onSubmit={this.actualizarData}>
                         <div className="card card-ajustes">
-                            {nuevoMensaje ?
-                                <div className={classMensaje} id="alert" role="alert">
-                                    {mensaje}
-                                    <button type="button" className="close" onClick={this.cerrarMensaje}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                : null}
                             <div className="card-body">
                                 <h6 className="titulo-ajustes">Editar Perfil</h6>
+                                {nuevoMensaje ?
+                                    <div className={classMensaje} id="alert" role="alert">
+                                        {mensaje}
+                                        <button type="button" className="close" onClick={this.cerrarMensaje}>
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    : null}
                                 <div className="row">
                                     <div className="col-lg-6 col-sm-12 col-md-6">
                                         <div className="form-group">
@@ -215,7 +232,7 @@ class Ajustes extends React.Component {
                                         </div>
                                         <div className="form-group">
                                             <label id="label-input" htmlFor="inputTelefono"> TELEFONO </label>
-                                            <input type="number" name="telefono" value={telefono} className="form-control" id="inputTelefono" onChange={this.changeInput} placeholder="Telefono" disabled={disableInput} />
+                                            <input type="number" name="telefono" value={+telefono} className="form-control" id="inputTelefono" onChange={this.changeInput} placeholder="Telefono" disabled={disableInput} />
                                         </div>
                                         <div className="form-group">
                                             <label id="label-input" htmlFor="inputCorreo"> CORREO </label>
@@ -249,7 +266,7 @@ class Ajustes extends React.Component {
                                         </div>
                                         :
                                         <div className="form-group">
-                                            <button onClick={this.guardar} data-toggle="modal" data-target="#modalAsegurar" className="btn btn-primary btn-guardar-ajustes">Guardar</button>
+                                            <button onClick={this.guardar} className="btn btn-primary btn-guardar-ajustes">Guardar</button>
                                             <button onClick={this.cancelar} className="btn btn-danger btn-cancelar-ajustes">Cancelar</button>
                                             <button onClick={this.cambiarContrasena} className="btn btn-primary" disabled={disableInput}>Cambiar contrasena</button>
                                         </div>
@@ -267,36 +284,7 @@ class Ajustes extends React.Component {
                     </form>
 
                     {/* Ventana Modal inicio*/}
-
-                    <div className="modal fade" id="modalAsegurar" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" arial-modal="false">
-
-                        {/* <div className="modal fade show" id="modalAsegurar" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" style={{display: 'block'}} arial-modal="true" aria-hidden="false"> */}
-
-                     
-                        <div className="modal-dialog" role="document">
-                            <div className="modal-content">
-
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Modal title</h5>
-                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-
-                                <div className="modal-body">
-                                    <p>Esta accion realizará una modificacion en su perfi, ¿Esta seguro de continuar?</p>
-                                </div>
-
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                    <button type="button" data-dismiss="modal" className="btn btn-primary" onClick={this.asegurarCambios}>Aceptar</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-
+                    <VentanaAsegurar titulo="Confirmar cambios" mensaje="Esta accion realizará una modificacion en su perfi, ¿Esta seguro de continuar?" estado={habilitarModal} ocultarVentana={this.cerrarVentanaModal} metodoAceptar={this.asegurarCambios} />
                     {/* Ventana Modal fin */}
                 </div>
             )

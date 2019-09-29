@@ -57,7 +57,11 @@ class Consumo extends React.Component {
                             consumo: res.consumoMes.consumoMes
                         });
                     }else{
-                        console.log("Error al encontrar consumo");
+                        if(!res.error){//no has consumido nada
+                            this.setState({
+                                mostrarConsumo: true
+                            });
+                        }
                     }
                 }).catch(error => console.error('Error:', error));
             }else{

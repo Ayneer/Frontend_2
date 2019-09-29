@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, withRouter } from 'react-router-dom';
+import { Switch, Route, withRouter, Redirect } from 'react-router-dom';
 import App from '../App';
 import IniciarSesion from '../IniciarSesion/IniciarSesion';
 import socketIOClient from "socket.io-client";
@@ -38,7 +38,7 @@ class Sesion extends React.Component {
         });
         socket.on('limiteKwh', (notificacion) => {
             console.log("Alerta: has superado el 50% de tu limite" + notificacion);
-            Push.create("Has superado el 50% de tu limite actual!", {
+            Push.create(notificacion.mensaje, {
                 body: "Limite: " + notificacion.limite+"/nConsumo: " + notificacion.consumo+"/nCosto: "+notificacion.costo,
                 timeout: 5000,
                 onClick: function () {
@@ -46,7 +46,6 @@ class Sesion extends React.Component {
                 }
             });
         });
-        this.sesionActiva(true);
     }
 
     sesionActiva(estado) {
@@ -54,9 +53,11 @@ class Sesion extends React.Component {
     }
 
     usuario(usuario) {
+        
         this.setState({
-            usuario: usuario
+            usuario
         })
+        this.sesionActiva(true);
     }
 
     async componentDidMount() {
@@ -70,7 +71,8 @@ class Sesion extends React.Component {
         });
         const res = await respuesta.json();
         if (!res.estado) {//Si la sesion esta inactiva 
-            this.props.history.push('/');
+            console.log("sesion inactiva")
+            this.props.history.push('/iniciarSesion');
             this.setState({ ok: true });
         } else {
             const socket = crearSocket2(this.props.url);
@@ -80,27 +82,28 @@ class Sesion extends React.Component {
                     this.activarSocket(socket);
                     console.log("Sesion: Sesin activa, reenviando hacia app");
                     //this.props.history.push('/App');
-                    this.setState({ ok: true, usuario: res.usuario });
+                    this.setState({ ok: true, usuario: res.usuario, sesionActiva: true });
                 }
             });
-
         }
     }
 
     render() {
         console.log('Render sesion - ok: ' + this.state.ok);
+        console.log(this.state.usuario)
         if (this.state.ok) {
             return (
                 <div id="">
                     <div>
                         {this.state.sesionActiva ?
                             <Switch>
-                                <Route exact path="/App" render={() => <App  actualizarUsuario={this.usuario} consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
-                                <Route path="/" render={() => <App actualizarUsuario={this.usuario}  consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
+                                <Route path="/App" render={() => <App  actualizarUsuario={this.usuario} consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
+                                <Route path="/"  render={() => <Redirect to="/App" />} />
                             </Switch>
                             :
                             <Switch>
-                                <Route path="/" render={() => <IniciarSesion usuario={this.usuario} activarSocket={this.activarSocket} history={this.props.history} crearSocket2={crearSocket2} url={this.props.url} />} />
+                                <Route exact path="/iniciarSesion" render={() => <IniciarSesion usuario={this.usuario} activarSocket={this.activarSocket} history={this.props.history} crearSocket2={crearSocket2} url={this.props.url} />} />
+                                <Route path="/"  render={() => <Redirect to="/iniciarSesion" />} />
                             </Switch>
                         }
                     </div>
