@@ -1,10 +1,10 @@
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 
 .iniciarSesion{
+    background-color: yellow;
     margin:auto;
     margin-top:80px;
-    /*width:400px;*/
-    width:100%;
+    max-width:400px;
     text-align: center; 
     outline: none;
 }
@@ -21,11 +21,6 @@
 }
 
 #cuadroForm{
-    /*border:solid 1px black;*/
-    /*width:400px;*/
-    width:100%;
-    height: 340px;
-    /*padding: 0px 30px 80px 30px;*/
     text-align: center;
     font-family: 'Poppins', sans-serif;
     margin:auto;
@@ -35,8 +30,6 @@
     background-color:rgb(60,173,228);
     border:solid 1px rgb(60,173,228);  
     margin-top: 15px;
-    margin-left: 260px;
-    
 }
 
 .campo{
@@ -48,3 +41,21 @@
 #campo1{
     margin-top: 30px;
 }
+
+/* // Small devices (landscape phones, 576px and up) */
+@media (max-width: 576px) { 
+    .iniciarSesion{
+width:280px;
+    }
+ }
+
+/* // Medium devices (tablets, 768px and up) */
+@media (max-width: 768px) {  }
+
+/* // Large devices (desktops, 992px and up) */
+@media (max-width: 992px) { 
+
+ }
+
+/* // Extra large devices (large desktops, 1200px and up) */
+@media (max-width: 1200px) {  }

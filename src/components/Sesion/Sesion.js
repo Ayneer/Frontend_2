@@ -1,7 +1,11 @@
 import React from 'react';
 import { Switch, Route, withRouter, Redirect } from 'react-router-dom';
+
 import App from '../App';
 import IniciarSesion from '../IniciarSesion/IniciarSesion';
+import Ayuda from '../Contenido/Ayuda/Ayuda';
+import Cargando from '../Cargando/CargandoPagina';
+
 import socketIOClient from "socket.io-client";
 import Push from 'push.js';
 
@@ -23,7 +27,8 @@ class Sesion extends React.Component {
             ok: false,
             consumo: 0,
             usuario: {},
-            sesionActiva: false
+            sesionActiva: false,
+            admin: null
         }
         this.usuario = this.usuario.bind(this);
         this.activarSocket = this.activarSocket.bind(this);
@@ -39,7 +44,7 @@ class Sesion extends React.Component {
         socket.on('limiteKwh', (notificacion) => {
             console.log("Alerta: has superado el 50% de tu limite" + notificacion);
             Push.create(notificacion.mensaje, {
-                body: "Limite: " + notificacion.limite+"/nConsumo: " + notificacion.consumo+"/nCosto: "+notificacion.costo,
+                body: "Limite: " + notificacion.limite + "/nConsumo: " + notificacion.consumo + "/nCosto: " + notificacion.costo,
                 timeout: 5000,
                 onClick: function () {
                     console.log(this);
@@ -52,12 +57,13 @@ class Sesion extends React.Component {
         this.setState({ sesionActiva: estado });
     }
 
-    usuario(usuario) {
-        
+    usuario(usuario, admin) {
         this.setState({
-            usuario
-        })
-        this.sesionActiva(true);
+            usuario,
+            sesionActiva: true,
+            admin
+        });
+        console.log("usuario de sesion cargado...")
     }
 
     async componentDidMount() {
@@ -73,47 +79,49 @@ class Sesion extends React.Component {
         if (!res.estado) {//Si la sesion esta inactiva 
             console.log("sesion inactiva")
             this.props.history.push('/iniciarSesion');
-            this.setState({ ok: true });
+            this.setState({admin: false});
         } else {
-            const socket = crearSocket2(this.props.url);
-            socket.emit('actualizarSocket', res.usuario.correo);//Emitir correo por socket
-            socket.on('Actualizado', (dato) => {//Si se acepta el correo puedo iniciar sesion
-                if (dato) {
-                    this.activarSocket(socket);
-                    console.log("Sesion: Sesin activa, reenviando hacia app");
-                    //this.props.history.push('/App');
-                    this.setState({ ok: true, usuario: res.usuario, sesionActiva: true });
-                }
-            });
+            if (res.admin) {
+                this.setState({ usuario: res.usuario, sesionActiva: true, admin: true });
+            } else {
+                const socket = crearSocket2(this.props.url);
+                socket.emit('actualizarSocket', res.usuario.correo);//Emitir correo por socket
+                socket.on('Actualizado', (dato) => {//Si se acepta el correo puedo iniciar sesion
+                    if (dato) {
+                        this.activarSocket(socket);
+                        console.log(res);
+                        //this.props.history.push('/App');
+                        this.setState({ usuario: res.usuario, sesionActiva: true, admin: false });
+                    }
+                });
+            }
+
         }
     }
 
     render() {
         console.log('Render sesion - ok: ' + this.state.ok);
-        console.log(this.state.usuario)
-        if (this.state.ok) {
-            return (
-                <div id="">
-                    <div>
-                        {this.state.sesionActiva ?
-                            <Switch>
-                                <Route path="/App" render={() => <App  actualizarUsuario={this.usuario} consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} />} />
-                                <Route path="/"  render={() => <Redirect to="/App" />} />
-                            </Switch>
-                            :
-                            <Switch>
-                                <Route exact path="/iniciarSesion" render={() => <IniciarSesion usuario={this.usuario} activarSocket={this.activarSocket} history={this.props.history} crearSocket2={crearSocket2} url={this.props.url} />} />
-                                <Route path="/"  render={() => <Redirect to="/iniciarSesion" />} />
-                            </Switch>
+        return (
+            <div id="">
+                <div>
+                    {this.state.admin === null ? 
+                        <Cargando />
+                        : 
+                        this.state.sesionActiva ?
+                        <Switch>
+                            <Route path="/App" render={() => <App actualizarUsuario={this.usuario} consumo={this.state.consumo} sesionActiva={this.sesionActiva} history={this.props.history} crearSocket2={crearSocket2} usuario={this.state.usuario} url={this.props.url} admin = {this.state.admin} />} />
+                            <Route path="/" render={() => <Redirect to="/App" />} />
+                        </Switch>
+                        :
+                        <Switch>
+                            <Route exact path="/iniciarSesion" render={() => <IniciarSesion usuario={this.usuario} activarSocket={this.activarSocket} history={this.props.history} crearSocket2={crearSocket2} url={this.props.url} />} />
+                            <Route exact path="/Ayda" render={() => <Ayuda />}/>
+                            <Route path="/" render={() => <Redirect to="/iniciarSesion" />} />
+                        </Switch>
                         }
-                    </div>
                 </div>
-            )
-        } else {
-            return (
-                <div> Cargando ... </div>
-            )
-        }
+            </div>
+        );
     }
 }
 

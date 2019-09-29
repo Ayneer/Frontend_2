@@ -39,7 +39,7 @@ class IniciarSesion extends React.Component {
     iniciarSesion(e) {
 
         e.preventDefault();
-        fetch(this.props.url+'/iniciarSesion', {//Solicitud de inicio de sesion
+        fetch(this.props.url + '/iniciarSesion', {//Solicitud de inicio de sesion
             method: 'POST',
             credentials: 'include',
             body: JSON.stringify({ correo: this.state.correo, contraseña: this.state.contraseña }),
@@ -51,24 +51,30 @@ class IniciarSesion extends React.Component {
             return response.json();//Analiza respuesta de servidor
         }).then(res => {
             if (res.Estado) {//Si NO hubo error al iniciar sesion
-                usuario = res.usuario;
-                if (!res.activo) {
-                    this.setState({
-                        cambiarClave: true,
-                        mensajeClave: "Repita su contrasena",
-                        contraseña: ""
-                    });
+                if (res.admin) {
+                    console.log("Sesion activa correctamente como administrador.");
+                    this.props.history.push('/App');// Se redirecciona a la app 
+                    this.props.usuario(res.usuario, true);
                 } else {
-                    let socket = this.props.crearSocket2(this.props.url);
-                    socket.emit('mi_correo', usuario.correo);//Emitir correo por socket
-                    socket.on('recibido', (dato) => {//Si se acepta el correo puedo iniciar sesion
-                        if (dato) {
-                            console.log("Sesion activa correctamente.");
-                            this.props.usuario(usuario);
-                            this.props.activarSocket(socket);
-                            this.props.history.push('/App');// Se redirecciona a la app 
-                        }
-                    });
+                    usuario = res.usuario;
+                    if (!res.activo) {
+                        this.setState({
+                            cambiarClave: true,
+                            mensajeClave: "Repita su contrasena",
+                            contraseña: ""
+                        });
+                    } else {
+                        let socket = this.props.crearSocket2(this.props.url);
+                        socket.emit('mi_correo', usuario.correo);//Emitir correo por socket
+                        socket.on('recibido', (dato) => {//Si se acepta el correo puedo iniciar sesion
+                            if (dato) {
+                                console.log("Sesion activa correctamente como cliente.");
+                                this.props.usuario(usuario, false);
+                                this.props.activarSocket(socket);
+                                this.props.history.push('/App');// Se redirecciona a la app 
+                            }
+                        });
+                    }
                 }
             } else {
                 //Mensaje de error de falla en inicio de sesion 
@@ -84,7 +90,7 @@ class IniciarSesion extends React.Component {
         if (this.state.contraseña === this.state.contraseña_1) {
             if (this.state.contraseña_1 !== usuario.correo) {
                 console.log("Cambiando clave 2...");
-                fetch(this.props.url+'/cliente/' + usuario.correo, {//Solicitud cambio de contrase
+                fetch(this.props.url + '/cliente/' + usuario.correo, {//Solicitud cambio de contrase
                     method: 'PUT',
                     credentials: 'include',
                     body: JSON.stringify({ sesionP: true, contraseña: this.state.contraseña }),
@@ -102,9 +108,9 @@ class IniciarSesion extends React.Component {
                         socket.emit('mi_correo', usuario.correo);//Emitir correo por socket
                         socket.on('recibido', (dato) => {//Si se acepta el correo puedo iniciar sesion
                             if (dato) {
-                                console.log("Sesion activa correctamente.");
+                                console.log("Sesion activa correctamente cliente.");
                                 this.props.activarSocket(socket);
-                                this.props.usuario(usuario);
+                                this.props.usuario(usuario, false);
                                 this.props.history.push('/App');// Se redirecciona a la app 
                             }
                         });
@@ -140,11 +146,11 @@ class IniciarSesion extends React.Component {
         if (this.state.mostrarIniciarS) {
             const { cambiarClave, mensajeClave } = this.state;
             return (
-                <div>
+                <div className="">
 
                     {/* <Navbar soyYo='inicioSesion' /> */}
-                    <div className="row">
-                        <div className="card iniciarSesion col-sm-12 col-md-6" >
+                    <div className="container">
+                        <div className="card iniciarSesion" >
                             <div id="cuadroForm" className="card-body">
                                 <h5 className="card-title">Iniciar Sesion</h5>
                                 <div className="alert alert-danger alert-dismissible fade show" role="alert" style={{ display: "none" }}>

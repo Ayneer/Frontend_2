@@ -12,7 +12,7 @@ class Navbar extends React.Component {
                     <nav id="barra" className="navbar navbar-expand-lg navbar-light bg-light">
                         <div id="contenedorSesion" className="container-fluid">
                             <h5 id="titulo">EnergiaApp</h5>
-                            <Link to="/app/ayuda">
+                            <Link to="/Ayuda">
                                 <button id="ayuda" type="button" className="btn btn-info" >
                                     <i className="fas fa-align-left"></i>
                                 </button>
@@ -26,9 +26,13 @@ class Navbar extends React.Component {
 
                 <nav id="barraPrin" className="navbar navbar-expand-lg navbar-light bg-light">
                     <div id="contenedorPrincipal" className="container-fluid">
-                        <button type="button" id="sidebarCollapse" className="btn btn-info" onClick={this.props.metodo} >
+                        {this.props.admin ? 
+                            null 
+                            : 
+                            <button type="button" id="sidebarCollapse" className="btn btn-info" onClick={this.props.metodo} >
                             <i className="fas fa-align-left"></i>
                         </button>
+                            }
                         <button id="cerrar" type="button" className="btn btn-info" onClick={this.props.cerrarSesion} >
                             <i className="fas fa-align-left"></i>
                         </button>

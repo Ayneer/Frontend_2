@@ -106,7 +106,7 @@ class Ajustes extends React.Component {
                         this.props.cerrarSesion();
                     } else {
                         usuario.telefono = +telefono;
-                        this.props.actualizarUsuario(usuario);
+                        this.props.actualizarUsuario(usuario, false);
                         this.cancelar();
                         this.lanzarMensaje("Actualizacion realizada con exito!", "alert alert-success alerta-ajustes");
                         console.log(res);

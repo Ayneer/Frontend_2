@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 let listUserFilter = [];
 
-export class Principal extends Component {
+class Principal extends Component {
 
 
     state = {
@@ -24,6 +24,7 @@ export class Principal extends Component {
 
     async componentDidMount() {
         const response = await fetch(this.props.url + "/clientes", {
+            method: 'GET',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -33,6 +34,7 @@ export class Principal extends Component {
         const json = await response.json();
 
         listUserFilter = json.clientes;
+        console.log(listUserFilter)
 
         if (json.estado) {
             this.setState({ listUser: json.clientes, showUser: true });
@@ -47,9 +49,13 @@ export class Principal extends Component {
         const value = event.target.value;
 
         var filter = listUserFilter.filter((str) => {
-            return str.nombre.toLowerCase().includes(value.toLowerCase()) || str.correo.toLowerCase().includes(value.toLowerCase())
-                || str.apellidos.toLowerCase().includes(value.toLowerCase()) || str.id_medidor.includes(value)
-                || str.cedula.includes(value);
+            if(str.correo && str.nombre && str.apellidos && str.id_medidor && str.cedula){
+                return str.nombre.toLowerCase().includes(value.toLowerCase()) ||
+                str.correo.toLowerCase().includes(value.toLowerCase()) || 
+                str.apellidos.toLowerCase().includes(value.toLowerCase()) || 
+                str.id_medidor+"".includes(value+"") ||
+                str.cedula.includes(value);
+            }
         });
 
         this.setState({
@@ -200,7 +206,7 @@ export class Principal extends Component {
     }
 
 
-    clearCard() {
+    clearCard = () => {
         this.setState({
             nombre: "",
             apellidos: "",
@@ -214,7 +220,7 @@ export class Principal extends Component {
 
 
     render() {
-
+        console.log("Render principal")
         const { correo, nombre, apellidos, cedula, id_medidor, showUser, listUser, newMessage, message, btnEditUser, newMessageListUser, classNewMessage } = this.state;
         let ThereUser = false;
         if (showUser) {
