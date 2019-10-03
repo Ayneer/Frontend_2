@@ -45,7 +45,7 @@
 /* // Small devices (landscape phones, 576px and up) */
 @media (max-width: 576px) { 
     .iniciarSesion{
-width:280px;
+        width:280px;
     }
  }
 

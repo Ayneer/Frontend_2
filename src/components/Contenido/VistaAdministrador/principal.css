@@ -1,0 +1,48 @@
+.user{
+    margin-top: 50px;
+    min-height: 26vh;
+    padding: 0%;
+
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+}
+
+.rowOne{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.newUser{
+    margin-top: 10px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.inputUser{
+    margin-bottom: 9px; 
+}
+
+.cardComponent{
+    margin-top: 20px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+.thead-dark{
+    background-color: #838383;
+}
+
+.alert{
+    margin-top: 10px;
+}
+
+.listUser{
+    background: rgba(255, 255, 255, 0.2);
+    width: 100%;
+}
+
+.filterUser{
+    padding-bottom: 9px;
+    padding-top: 9px;
+}

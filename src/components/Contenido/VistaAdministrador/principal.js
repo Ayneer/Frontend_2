@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './principal.css';
 
 let listUserFilter = [];
 
@@ -55,6 +56,8 @@ class Principal extends Component {
                 str.apellidos.toLowerCase().includes(value.toLowerCase()) || 
                 str.id_medidor+"".includes(value+"") ||
                 str.cedula.includes(value);
+            }else{
+                return null;
             }
         });
 
@@ -151,6 +154,26 @@ class Principal extends Component {
 
     }
 
+    fn_RecuperarContraseña = async (evento) => {
+        const sCorreoCliente = evento.target.value;
+
+        const respustaServidor = await fetch(this.props.url + "/cliente/" + sCorreoCliente, {
+            method: 'PUT',
+            body: JSON.stringify({ mod: "modA1", contraseña: sCorreoCliente }),
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Accept': 'application/json'
+            }
+        });
+        const resouestaSJson = await respustaServidor.json();
+        if(resouestaSJson.estado){
+            this.throwMessage("Contraseña reestablecida con exito.", "alert alert-success");
+        }else{
+            this.throwMessage(resouestaSJson.mensaje, "alert alert-danger");
+        }
+    }
+
     findUser(correo) {
         let cliente = JSON;
         for (var i = 0; i < this.state.listUser.length; i++) {
@@ -230,13 +253,13 @@ class Principal extends Component {
             return (
                 <div className="user container">
                     <div className="row rowOne">
-                        <div className="col-lg-4 newUser">
+                        <div className="col-lg-3 newUser">
                             <div className="titleNewUser">
                                 <h6>
-                                    New user
+                                    Formulario de cliente
                                     </h6>
                             </div>
-                            {/* New user card start */}
+                            {/* Card para crear/editar a un cliente */}
                             <div className="card mx-auto cardComponent">
                                 {newMessage ?
                                     <div className={classNewMessage} id="alert" role="alert">
@@ -246,24 +269,44 @@ class Principal extends Component {
                                         </button>
                                     </div>
                                     : null}
-                                <div className="card-header">
-
-                                    <input className="form-control inputUser" type="text" name="nombre" placeholder="User's name" value={nombre} onChange={this.formUser}></input>
-
-                                    <input className="form-control inputUser" type="text" name="correo" placeholder="User's email" value={correo} onChange={this.formUser} required />
+                                <div className="card-header" style={{textAlign: 'left', fontSize: '12px'}}>
+                                    <div className="form-group">
+                                        <label forhtml="nombre">Nombre(s) del cliente</label>
+                                        <input className="form-control form-control-sm inputUser" id="nombre" type="text" name="nombre" placeholder="Nombre(s) del cliente" value={nombre} onChange={this.formUser} disabled={btnEditUser} required></input>
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label forhtml="apellidos">Apellido(s) del cliente</label>
+                                        <input id="apellidos" className="form-control form-control-sm inputUser" type="text" name="apellidos" placeholder="Apellido(s) del cliente" value={apellidos} onChange={this.formUser} disabled={btnEditUser} required></input>
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label forhtml="correo">Correo del cliente</label>
+                                        <input id="correo" className="form-control form-control-sm inputUser" type="text" name="correo" placeholder="cliente@servicio.dominio" value={correo} onChange={this.formUser} disabled={btnEditUser} required />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label forhtml="cedula">Cedula del cliente</label>
+                                        <input id="cedula" className="form-control form-control-sm inputUser" type="Number" name="cedula" value={+cedula} onChange={this.formUser} disabled={btnEditUser} required />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label forhtml="id_medidor">ID del medidor a usar</label>
+                                        <input  name="id_medidor" className="form-control form-control-sm inputUser" type="Number" name="id_medidor" value={+id_medidor} onChange={this.formUser} required />
+                                    </div>
 
                                     <div className="btn-group-md">
                                         {btnEditUser ?
-                                            <button type="submit" className="btn btn-primary mr-3 btn-newUser inputUser" onClick={this.updateUSer}>
-                                                Update user
+                                            <button type="submit" className="btn btn-primary btn-sm mr-3 btn-newUser inputUser" onClick={this.updateUSer}>
+                                                Actualizar
                                                 </button>
                                             :
-                                            <button type="submit" className="btn btn-primary mr-3 btn-newUser inputUser" onClick={this.newUser}>
-                                                Create user
+                                            <button type="submit" className="btn btn-primary btn-sm mr-3 btn-newUser inputUser" onClick={this.newUser}>
+                                                Crear
                                                 </button>
                                         }
-                                        <button type="submit" className="btn btn-danger btn-newUser inputUser" onClick={this.clearCard}>
-                                            Cancel
+                                        <button type="submit" className="btn btn-danger btn-sm btn-newUser inputUser" onClick={this.clearCard}>
+                                            Cancelar
                                             </button>
                                     </div>
 
@@ -272,7 +315,7 @@ class Principal extends Component {
                             {/* New user card end */}
 
                         </div>
-                        <div className="col-lg-8 listUser">
+                        <div className="col-lg-9 listUser">
 
                             {newMessageListUser ?
                                 <div className={classNewMessage} role="alert">
@@ -288,13 +331,15 @@ class Principal extends Component {
                             </div>
 
                             {ThereUser ?
-                                <div className="table-responsive">
-                                    <table className="table">
+                                <div className="table-responsive-lg">
+                                    <table className="table table-striped " style={{fontSize: '13px'}}>
                                         <thead className="thead-dark">
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">Nombre</th>
                                                 <th scope="col">Correo</th>
+                                                <th scope="col">CC</th>
+                                                <th scope="col">ID del medidor</th>
                                                 <th scope="col">Acciones</th>
                                             </tr>
                                         </thead>
@@ -302,14 +347,18 @@ class Principal extends Component {
                                             {listUser.map((user, index) =>
                                                 <tr key={index}>
                                                     <th scope="row">{index + 1}</th>
-                                                    <td>{user.nombre}</td>
+                                                    <td>{user.nombre + " " + user.apellidos}</td>
                                                     <td>{user.correo}</td>
+                                                    <td>{user.cedula}</td>
+                                                    <td>{user.id_medidor}</td>
                                                     <td>
-                                                        <div className="btn-group-sm">
+                                                        <div className="btn-group btn-group-sm" role="group">
 
-                                                            <button className="btn btn-primary mr-3" value={user.correo} onClick={this.editUser}>Edit</button>
+                                                            <button className="btn btn-secondary btn-sm" value={user.correo} onClick={this.editUser}>Editar</button>
+                                                            <button className="btn btn-secondary btn-sm" value={user.correo} onClick={this.fn_RecuperarContraseña}>Recuperar</button>
+                                                            <button className="btn btn-danger btn-sm" value={user.correo} onClick={this.deleteUser}>Eliminar</button>
 
-                                                            <button className="btn btn-danger" value={user.correo} onClick={this.deleteUser}>Delete</button>
+                                                            
                                                         </div>
                                                     </td>
                                                 </tr>

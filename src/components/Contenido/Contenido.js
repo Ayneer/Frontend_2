@@ -34,16 +34,14 @@ class Pagina extends React.Component {
     }
 
     render() {
-        console.log(this.props.url);
+        console.log(this.props.admin);
 
         if (this.state.activarContenidos) {
             
             return (
                 <div className="contenido">
-                    <Principal url={this.props.url} />
                         {!this.props.admin ?
                             <Switch>
-
                                 <Route exact path="/App" render={() => <Consumo usuario={this.props.usuario} consumo={this.props.consumo} url={this.props.url} />} />
                                 <Route exact path="/App/consumo" render={() => <Consumo usuario={this.props.usuario} consumo={this.props.consumo} url={this.props.url} />} />
                                 <Route exact path="/App/historial" render={() => <Historial usuario={this.props.usuario} url={this.props.url} />} />
@@ -54,9 +52,8 @@ class Pagina extends React.Component {
                             </Switch>
                             :
                             <Switch>
-                                <Route path="App" render={() => <Principal url={this.props.url} />} />
-
-                                <Route path="/" render={() => <Redirect to="/App" />} />
+                                <Route exact path="/App/principal" render={() => <Principal url={this.props.url} />} />
+                                <Route path="/" render={() => <Redirect to="/App/principal" />} />
                             </Switch>
                         }
 
