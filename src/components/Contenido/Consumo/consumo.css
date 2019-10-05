@@ -33,3 +33,14 @@
     font-family:  'Didact Gothic', sans-serif;
     text-decoration:underline;
 }
+
+.js-count{
+    position: absolute;
+    left:195px;
+    top: 75px;
+}
+
+.chart-canvas{
+    margin-top:11px;
+    
+}

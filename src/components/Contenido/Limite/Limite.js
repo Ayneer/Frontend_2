@@ -1,5 +1,6 @@
 import React from 'react';
 import "./limite.css";
+import Chart from 'chart.js';
 
 let opc1 = "Unidad de consumo (kwh)";
 let opc2 = "Pesos colombianos ($)";
@@ -108,6 +109,73 @@ class Limite extends React.Component {
         }
     }
 
+
+    crearGrafica = () => {
+        // var ctx = document.getElementById('graficaLimite');
+        // new Chart(ctx, {
+        //     type: 'doughnut',
+        //     data: {
+        //         datasets: [
+        //             {
+        //                 data:[30],
+        //                 backgroundColor:[
+        //                     'rgba(255,69,96,1)'
+        //                 ],
+        //                 borderWidth: 0,
+        //                 hoverBackgroundColor: [
+        //                     'rgb(255,69,96)'
+        //                 ],
+        //                 hoverBorderWidth: 0
+        //             }
+        //         ]
+        //     },
+        //     options: {
+        //         rotation: -1.0 * Math.PI,
+        //         circumference: Math.PI,
+        //     }
+        // });
+        var deliveredData = {
+            labels: [
+                "Value"
+            ],
+            datasets: [
+                {
+                    data: [20, 80],
+                    backgroundColor: [
+                        "#3ec556",
+                        "rgba(0,0,0,0)"
+                    ],
+                    hoverBackgroundColor: [
+                        "#3ec556",
+                        "rgba(0,0,0,0)"
+                    ],
+                    borderWidth: [
+                        0, 0
+                    ]
+                }]
+        };
+
+        var deliveredOpt = {
+            cutoutPercentage: 88,
+            animation: {
+                animationRotate: true,
+                duration: 2000
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                enabled: false
+            }
+        };
+        var ctx = document.getElementById('graficaLimite');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: deliveredData,
+            options: deliveredOpt
+        });
+    }
+
     async componentDidMount() {
 
         if (this.props.usuario !== null) {
@@ -139,7 +207,7 @@ class Limite extends React.Component {
                         arrayOpciones: { opc1, opc2 },
                         nuevoLimite : false
                     });
-                
+                this.crearGrafica();
             }else{
                 this.setState({
                     mostrarLimite: true,
@@ -184,6 +252,15 @@ class Limite extends React.Component {
                         </div>
                         <div id="cuadrado1" className="col-5 offset-md-1">
                             <h6>Limite actual</h6>
+                            <div class="modal-div-canvas js-chart">
+                                <div class="chart-canvas">
+                                    <canvas id="graficaLimite" width="3px" height="1"></canvas>
+                                    <div class="chart-background"></div>
+                                    <span class="chart-unique-value">
+                                        <span class="js-count">85%</span>
+                                    </span>
+                                </div>
+                            </div>
                             <h6>{mensaje}</h6>
                         </div>
                     </div>

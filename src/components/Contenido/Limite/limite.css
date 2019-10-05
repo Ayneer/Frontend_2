@@ -38,3 +38,15 @@
     background-color:rgb(60,173,228);
     border: solid 1px rgb(60,173,228);
 }
+
+
+.js-count{
+    position: absolute;
+    left:195px;
+    top: 75px;
+}
+
+.chart-canvas{
+    margin-top:11px;
+    
+}
