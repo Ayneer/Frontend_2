@@ -19,7 +19,8 @@ class Principal extends Component {
         newMessageListUser: false,
         classNewMessage: "",
         message: "",
-        btnEditUser: false
+        btnEditUser: false,
+        costoUnitario: ""
     }
 
 
@@ -50,13 +51,13 @@ class Principal extends Component {
         const value = event.target.value;
 
         var filter = listUserFilter.filter((str) => {
-            if(str.correo && str.nombre && str.apellidos && str.id_medidor && str.cedula){
+            if (str.correo && str.nombre && str.apellidos && str.id_medidor && str.cedula) {
                 return str.nombre.toLowerCase().includes(value.toLowerCase()) ||
-                str.correo.toLowerCase().includes(value.toLowerCase()) || 
-                str.apellidos.toLowerCase().includes(value.toLowerCase()) || 
-                str.id_medidor+"".includes(value+"") ||
-                str.cedula.includes(value);
-            }else{
+                    str.correo.toLowerCase().includes(value.toLowerCase()) ||
+                    str.apellidos.toLowerCase().includes(value.toLowerCase()) ||
+                    str.id_medidor + "".includes(value + "") ||
+                    str.cedula.includes(value);
+            } else {
                 return null;
             }
         });
@@ -167,9 +168,9 @@ class Principal extends Component {
             }
         });
         const resouestaSJson = await respustaServidor.json();
-        if(resouestaSJson.estado){
+        if (resouestaSJson.estado) {
             this.throwMessage("Contraseña reestablecida con exito.", "alert alert-success");
-        }else{
+        } else {
             this.throwMessage(resouestaSJson.mensaje, "alert alert-danger");
         }
     }
@@ -229,6 +230,33 @@ class Principal extends Component {
     }
 
 
+    updateCost = async () => {
+        const { costoUnitario } = this.state;
+        if (costoUnitario === "") {
+            this.throwMessage("Llene todos los campos", "alert alert-danger");
+        } else {
+
+            const response = await fetch(this.props.url + "/sistema", {
+                method: 'PUT',
+                body: JSON.stringify({ costoUnitario: costoUnitario }),
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8',
+                    'Accept': 'application/json'
+                }
+            });
+            const json = await response.json();
+            if (json.estado) {
+                this.throwMessage(json.mensaje, "alert alert-success");
+                this.componentDidMount();
+                this.clearCard();
+            } else {
+                this.throwMessage(json.mensaje, "alert alert-danger");
+            }
+
+        }
+    }
+
     clearCard = () => {
         this.setState({
             nombre: "",
@@ -269,30 +297,30 @@ class Principal extends Component {
                                         </button>
                                     </div>
                                     : null}
-                                <div className="card-header" style={{textAlign: 'left', fontSize: '12px'}}>
+                                <div className="card-header" style={{ textAlign: 'left', fontSize: '12px' }}>
                                     <div className="form-group">
                                         <label forhtml="nombre">Nombre(s) del cliente</label>
                                         <input className="form-control form-control-sm inputUser" id="nombre" type="text" name="nombre" placeholder="Nombre(s) del cliente" value={nombre} onChange={this.formUser} disabled={btnEditUser} required></input>
                                     </div>
-                                    
+
                                     <div className="form-group">
                                         <label forhtml="apellidos">Apellido(s) del cliente</label>
                                         <input id="apellidos" className="form-control form-control-sm inputUser" type="text" name="apellidos" placeholder="Apellido(s) del cliente" value={apellidos} onChange={this.formUser} disabled={btnEditUser} required></input>
                                     </div>
-                                    
+
                                     <div className="form-group">
                                         <label forhtml="correo">Correo del cliente</label>
                                         <input id="correo" className="form-control form-control-sm inputUser" type="text" name="correo" placeholder="cliente@servicio.dominio" value={correo} onChange={this.formUser} disabled={btnEditUser} required />
                                     </div>
-                                    
+
                                     <div className="form-group">
                                         <label forhtml="cedula">Cedula del cliente</label>
                                         <input id="cedula" className="form-control form-control-sm inputUser" type="Number" name="cedula" value={+cedula} onChange={this.formUser} disabled={btnEditUser} required />
                                     </div>
-                                    
+
                                     <div className="form-group">
                                         <label forhtml="id_medidor">ID del medidor a usar</label>
-                                        <input  name="id_medidor" className="form-control form-control-sm inputUser" type="Number" name="id_medidor" value={+id_medidor} onChange={this.formUser} required />
+                                        <input name="id_medidor" className="form-control form-control-sm inputUser" type="Number" name="id_medidor" value={+id_medidor} onChange={this.formUser} required />
                                     </div>
 
                                     <div className="btn-group-md">
@@ -327,12 +355,19 @@ class Principal extends Component {
                                 : null}
 
                             <div className="filterUser">
+                                <input name="costoUnitario" className="form-control form-control-sm inputUser" type="Number" onChange={this.formUser} />
+                            </div>
+                            <button type="submit" className="btn btn-primary btn-sm mr-3 btn-newUser inputUser" onClick={this.updateCost}>
+                                Actualizar
+                                                </button>
+
+                            <div className="filterUser">
                                 <input className="form-control" type="text" placeholder="Search a user by name or email" aria-label="Search" onChange={this.filterUser} />
                             </div>
 
                             {ThereUser ?
                                 <div className="table-responsive-lg">
-                                    <table className="table table-striped " style={{fontSize: '13px'}}>
+                                    <table className="table table-striped " style={{ fontSize: '13px' }}>
                                         <thead className="thead-dark">
                                             <tr>
                                                 <th scope="col">#</th>
@@ -358,7 +393,7 @@ class Principal extends Component {
                                                             <button className="btn btn-secondary btn-sm" value={user.correo} onClick={this.fn_RecuperarContraseña}>Recuperar</button>
                                                             <button className="btn btn-danger btn-sm" value={user.correo} onClick={this.deleteUser}>Eliminar</button>
 
-                                                            
+
                                                         </div>
                                                     </td>
                                                 </tr>
